@@ -6,6 +6,7 @@ from http.server import HTTPServer
 from handler import FumbleHandler
 from db import MongoDB
 
+
 MongoDB().recreate()
 
 

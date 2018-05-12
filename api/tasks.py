@@ -41,7 +41,7 @@ def task_get_matches(record):
         # For each match, create two records.
         criteria = {'from': record['userId'], 'to': loc['userId']}
         new_values = criteria.copy()
-        new_values.update({'time': datetime.utcnow()})
+        new_values.update({'time': record['time']})
         # Update existing or create new record
         db.matches.update(criteria, new_values, upsert=True)
         # Symmetrical - both users get a match made `to` them `from` the other user
