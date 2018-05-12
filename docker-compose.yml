@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+
+  api:
+    container_name: api
+    hostname: api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    command: python -u app.py
+    environment:
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      BROKER_URL: pyamqp://guest@rabbitmq:5672//
+    ports:
+      - "8000:8000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mongo
+      - rabbitmq
+
+  worker:
+    container_name: worker
+    hostname: worker
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    command: celery -A tasks worker --loglevel=info
+    environment:
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      BROKER_URL: pyamqp://guest@rabbitmq:5672//
+    depends_on:
+      - mongo
+      - rabbitmq
+
+  mongo:
+    image: mongo:3.6
+    container_name: mongo
+    hostname: mongo
+    ports:
+      - "27017:27017"
+
+  rabbitmq:
+    image: rabbitmq:3.7.5
+    container_name: rabbitmq
+    hostname: rabbitmq
